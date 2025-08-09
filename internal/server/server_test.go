@@ -18,7 +18,7 @@ import (
 
 func TestNewHTTPServer(t *testing.T) {
 	cfg := &config.Config{
-		Server: config.ServerConfig{Host: "localhost", Port: 8080},
+		Server: config.ServerConfig{Host: "localhost", Port: 1124},
 	}
 	log := logger.NewLogger(logger.InfoLevel, nil)
 	authenticator := auth.NewNoOpAuthenticator()
@@ -34,14 +34,14 @@ func TestNewHTTPServer(t *testing.T) {
 		t.Fatal("Expected HTTPServer type")
 	}
 
-	if httpServer.GetAddr() != "localhost:8080" {
-		t.Errorf("Expected address 'localhost:8080', got '%s'", httpServer.GetAddr())
+	if httpServer.GetAddr() != "localhost:1124" {
+		t.Errorf("Expected address 'localhost:1124', got '%s'", httpServer.GetAddr())
 	}
 }
 
 func TestHTTPServer_RegisterRoutes(t *testing.T) {
 	cfg := &config.Config{
-		Server: config.ServerConfig{Host: "localhost", Port: 8080},
+		Server: config.ServerConfig{Host: "localhost", Port: 1124},
 	}
 	log := logger.NewLogger(logger.InfoLevel, nil)
 	authenticator := auth.NewNoOpAuthenticator()
@@ -69,7 +69,7 @@ func TestHTTPServer_RegisterRoutes(t *testing.T) {
 
 func TestHTTPServer_RegisterRoutes_EmptyRoutes(t *testing.T) {
 	cfg := &config.Config{
-		Server: config.ServerConfig{Host: "localhost", Port: 8080},
+		Server: config.ServerConfig{Host: "localhost", Port: 1124},
 	}
 	log := logger.NewLogger(logger.InfoLevel, nil)
 	authenticator := auth.NewNoOpAuthenticator()
@@ -85,7 +85,7 @@ func TestHTTPServer_RegisterRoutes_EmptyRoutes(t *testing.T) {
 
 func TestHTTPServer_RegisterRoutes_InvalidRoute(t *testing.T) {
 	cfg := &config.Config{
-		Server: config.ServerConfig{Host: "localhost", Port: 8080},
+		Server: config.ServerConfig{Host: "localhost", Port: 1124},
 	}
 	log := logger.NewLogger(logger.InfoLevel, nil)
 	authenticator := auth.NewNoOpAuthenticator()
@@ -105,7 +105,7 @@ func TestHTTPServer_RegisterRoutes_InvalidRoute(t *testing.T) {
 
 func TestHTTPServer_NotFoundHandler(t *testing.T) {
 	cfg := &config.Config{
-		Server: config.ServerConfig{Host: "localhost", Port: 8080},
+		Server: config.ServerConfig{Host: "localhost", Port: 1124},
 		Routes: []config.RouteConfig{
 			{Path: "/static", Directory: "/tmp"},
 		},
@@ -136,7 +136,7 @@ func TestHTTPServer_NotFoundHandler(t *testing.T) {
 
 func TestHTTPServer_LoggingMiddleware(t *testing.T) {
 	cfg := &config.Config{
-		Server: config.ServerConfig{Host: "localhost", Port: 8080},
+		Server: config.ServerConfig{Host: "localhost", Port: 1124},
 	}
 	
 	// Use a buffer to capture log output
@@ -234,7 +234,7 @@ func TestHTTPServer_Integration(t *testing.T) {
 	os.WriteFile(testFile, []byte(testContent), 0644)
 
 	cfg := &config.Config{
-		Server: config.ServerConfig{Host: "localhost", Port: 8080},
+		Server: config.ServerConfig{Host: "localhost", Port: 1124},
 		Routes: []config.RouteConfig{
 			{Path: "/static", Directory: staticDir},
 		},
@@ -298,10 +298,11 @@ func TestHTTPServer_StartStop(t *testing.T) {
 	if err != nil {
 		t.Fatalf("Failed to stop server: %v", err)
 	}
-}f
-unc TestLifecycleManager_NewLifecycleManager(t *testing.T) {
+}
+
+func TestLifecycleManager_NewLifecycleManager(t *testing.T) {
 	cfg := &config.Config{
-		Server: config.ServerConfig{Host: "localhost", Port: 8080},
+		Server: config.ServerConfig{Host: "localhost", Port: 1124},
 		Routes: []config.RouteConfig{
 			{Path: "/test", Directory: t.TempDir()},
 		},

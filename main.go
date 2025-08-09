@@ -6,6 +6,7 @@ import (
 	"os"
 	"path/filepath"
 
+	"mini-http-service/internal/config"
 	"mini-http-service/internal/logger"
 	"mini-http-service/internal/service"
 )
@@ -22,7 +23,7 @@ func main() {
 	var (
 		install    = flag.Bool("install", false, "Install the service")
 		uninstall  = flag.Bool("uninstall", false, "Uninstall the service")
-		showHelp   = flag.Bool("help", false, "Show help information")
+		help       = flag.Bool("help", false, "Show help information")
 		showVer    = flag.Bool("version", false, "Show version information")
 		configPath = flag.String("config", defaultConfig, "Path to configuration file")
 	)
@@ -39,7 +40,7 @@ func main() {
 	}
 
 	// Show help information
-	if *showHelp {
+	if *help {
 		showHelp()
 		return
 	}

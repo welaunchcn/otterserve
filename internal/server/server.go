@@ -3,6 +3,7 @@ package server
 import (
 	"context"
 	"fmt"
+	"net"
 	"net/http"
 	"strings"
 	"time"
@@ -29,6 +30,7 @@ type HTTPServer struct {
 	logger       logger.Logger
 	authenticator auth.Authenticator
 	fileServer   fileserver.FileServer
+	actualAddr   string
 }
 
 // NewHTTPServer creates a new HTTP server instance
@@ -66,20 +68,29 @@ func (s *HTTPServer) Start() error {
 		"auth_enabled": s.authenticator.IsEnabled(),
 	})
 
+	// Create listener to get actual address
+	listener, err := net.Listen("tcp", s.server.Addr)
+	if err != nil {
+		return fmt.Errorf("failed to create listener: %w", err)
+	}
+
+	// Store the actual address
+	s.actualAddr = listener.Addr().String()
+
 	// Start server in a goroutine
 	go func() {
-		if err := s.server.ListenAndServe(); err != nil && err != http.ErrServerClosed {
+		if err := s.server.Serve(listener); err != nil && err != http.ErrServerClosed {
 			s.logger.Error("Server failed to start", logger.Fields{
 				"error": err.Error(),
 			})
 		}
 	}()
 
-	// Give the server a moment to start and check if it's listening
+	// Give the server a moment to start
 	time.Sleep(100 * time.Millisecond)
 	
 	s.logger.Info("HTTP server started successfully", logger.Fields{
-		"address": s.server.Addr,
+		"address": s.actualAddr,
 	})
 
 	return nil
@@ -223,6 +234,9 @@ func (s *HTTPServer) notFoundHandler(w http.ResponseWriter, r *http.Request) {
 
 // GetAddr returns the server address
 func (s *HTTPServer) GetAddr() string {
+	if s.actualAddr != "" {
+		return s.actualAddr
+	}
 	return s.server.Addr
 }
 
@@ -249,8 +263,9 @@ func (rw *responseWriter) Write(data []byte) (int, error) {
 // generateRequestID generates a simple request ID
 func generateRequestID() string {
 	return fmt.Sprintf("req-%d", time.Now().UnixNano())
-}// L
-ifecycleManager manages server lifecycle including graceful shutdown
+}
+
+// LifecycleManager manages server lifecycle including graceful shutdown
 type LifecycleManager struct {
 	server Server
 	logger logger.Logger

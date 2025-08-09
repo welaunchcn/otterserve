@@ -1,6 +1,7 @@
 package config
 
 import (
+	"errors"
 	"fmt"
 	"os"
 	"path/filepath"
@@ -46,6 +47,7 @@ type ConfigManager interface {
 	Load(filename string) (*Config, error)
 	Save(config *Config, filename string) error
 	Validate(config *Config) error
+	LoadOrCreateDefault(filename string) (*Config, error)
 }
 
 // DefaultConfigManager implements ConfigManager
@@ -96,7 +98,7 @@ func GetDefaultConfig() *Config {
 	return &Config{
 		Server: ServerConfig{
 			Host: "localhost",
-			Port: 8080,
+			Port: 1123,
 		},
 		Auth: AuthConfig{
 			Enabled:  false,
@@ -120,7 +122,7 @@ func (cm *DefaultConfigManager) LoadOrCreateDefault(filename string) (*Config, e
 	config, err := cm.Load(filename)
 	if err != nil {
 		// If file doesn't exist, create default config
-		if os.IsNotExist(err) {
+		if errors.Is(err, os.ErrNotExist) {
 			config = GetDefaultConfig()
 			
 			// Apply defaults to ensure all fields are set
@@ -155,7 +157,9 @@ func (cm *DefaultConfigManager) applyDefaults(config *Config) {
 	if config.Server.Host == "" {
 		config.Server.Host = defaults.Server.Host
 	}
-	if config.Server.Port == 0 {
+	// Note: Port 0 is valid (means "use any available port"), so we don't override it
+	// Only apply default port if port is negative (which would be invalid)
+	if config.Server.Port < 0 {
 		config.Server.Port = defaults.Server.Port
 	}
 	
@@ -190,8 +194,8 @@ func (cm *DefaultConfigManager) Validate(config *Config) error {
 	if config.Server.Host == "" {
 		return fmt.Errorf("server host cannot be empty")
 	}
-	if config.Server.Port <= 0 || config.Server.Port > 65535 {
-		return fmt.Errorf("server port must be between 1 and 65535, got %d", config.Server.Port)
+	if config.Server.Port < 0 || config.Server.Port > 65535 {
+		return fmt.Errorf("server port must be between 0 and 65535, got %d", config.Server.Port)
 	}
 
 	// Validate authentication configuration

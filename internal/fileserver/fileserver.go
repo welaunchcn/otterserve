@@ -3,7 +3,6 @@ package fileserver
 import (
 	"fmt"
 	"html/template"
-	"io"
 	"mime"
 	"net/http"
 	"os"
@@ -36,11 +35,13 @@ func (fs *DefaultFileServer) ServeFiles(w http.ResponseWriter, r *http.Request, 
 	}
 
 	// Clean the path to prevent directory traversal attacks
-	relativePath = filepath.Clean(relativePath)
-	if strings.HasPrefix(relativePath, "..") {
+	cleanPath := filepath.Clean(relativePath)
+	// Check for directory traversal attempts
+	if strings.Contains(relativePath, "..") || strings.HasPrefix(cleanPath, "/") || cleanPath == ".." {
 		http.Error(w, "403 Forbidden", http.StatusForbidden)
 		return
 	}
+	relativePath = cleanPath
 
 	// Construct the full file path
 	fullPath := filepath.Join(directory, relativePath)

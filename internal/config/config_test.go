@@ -15,7 +15,7 @@ func TestConfigManager_Load(t *testing.T) {
 	
 	configContent := `server:
   host: "localhost"
-  port: 8080
+  port: 1124
 auth:
   enabled: true
   username: "admin"
@@ -45,8 +45,8 @@ logging:
 	if config.Server.Host != "localhost" {
 		t.Errorf("Expected host 'localhost', got '%s'", config.Server.Host)
 	}
-	if config.Server.Port != 8080 {
-		t.Errorf("Expected port 8080, got %d", config.Server.Port)
+	if config.Server.Port != 1124 {
+		t.Errorf("Expected port 1124, got %d", config.Server.Port)
 	}
 	if !config.Auth.Enabled {
 		t.Error("Expected auth to be enabled")
@@ -173,7 +173,7 @@ func TestConfigManager_Validate(t *testing.T) {
 		{
 			name: "valid config",
 			config: &Config{
-				Server: ServerConfig{Host: "localhost", Port: 8080},
+				Server: ServerConfig{Host: "localhost", Port: 1124},
 				Auth:   AuthConfig{Enabled: false},
 				Routes: []RouteConfig{
 					{Path: "/static", Directory: staticDir},
@@ -190,7 +190,7 @@ func TestConfigManager_Validate(t *testing.T) {
 		{
 			name: "empty host",
 			config: &Config{
-				Server: ServerConfig{Host: "", Port: 8080},
+				Server: ServerConfig{Host: "", Port: 1124},
 				Auth:   AuthConfig{Enabled: false},
 				Routes: []RouteConfig{
 					{Path: "/static", Directory: staticDir},
@@ -202,7 +202,7 @@ func TestConfigManager_Validate(t *testing.T) {
 		{
 			name: "invalid port",
 			config: &Config{
-				Server: ServerConfig{Host: "localhost", Port: 0},
+				Server: ServerConfig{Host: "localhost", Port: -1},
 				Auth:   AuthConfig{Enabled: false},
 				Routes: []RouteConfig{
 					{Path: "/static", Directory: staticDir},
@@ -214,7 +214,7 @@ func TestConfigManager_Validate(t *testing.T) {
 		{
 			name: "auth enabled without username",
 			config: &Config{
-				Server: ServerConfig{Host: "localhost", Port: 8080},
+				Server: ServerConfig{Host: "localhost", Port: 1124},
 				Auth:   AuthConfig{Enabled: true, Username: "", Password: "secret"},
 				Routes: []RouteConfig{
 					{Path: "/static", Directory: staticDir},
@@ -226,7 +226,7 @@ func TestConfigManager_Validate(t *testing.T) {
 		{
 			name: "auth enabled without password",
 			config: &Config{
-				Server: ServerConfig{Host: "localhost", Port: 8080},
+				Server: ServerConfig{Host: "localhost", Port: 1124},
 				Auth:   AuthConfig{Enabled: true, Username: "admin", Password: ""},
 				Routes: []RouteConfig{
 					{Path: "/static", Directory: staticDir},
@@ -238,7 +238,7 @@ func TestConfigManager_Validate(t *testing.T) {
 		{
 			name: "no routes",
 			config: &Config{
-				Server:  ServerConfig{Host: "localhost", Port: 8080},
+				Server:  ServerConfig{Host: "localhost", Port: 1124},
 				Auth:    AuthConfig{Enabled: false},
 				Routes:  []RouteConfig{},
 				Logging: LoggingConfig{Level: "info"},
@@ -248,7 +248,7 @@ func TestConfigManager_Validate(t *testing.T) {
 		{
 			name: "route with empty path",
 			config: &Config{
-				Server: ServerConfig{Host: "localhost", Port: 8080},
+				Server: ServerConfig{Host: "localhost", Port: 1124},
 				Auth:   AuthConfig{Enabled: false},
 				Routes: []RouteConfig{
 					{Path: "", Directory: staticDir},
@@ -260,7 +260,7 @@ func TestConfigManager_Validate(t *testing.T) {
 		{
 			name: "route with nonexistent directory",
 			config: &Config{
-				Server: ServerConfig{Host: "localhost", Port: 8080},
+				Server: ServerConfig{Host: "localhost", Port: 1124},
 				Auth:   AuthConfig{Enabled: false},
 				Routes: []RouteConfig{
 					{Path: "/static", Directory: "/nonexistent/directory"},
@@ -272,7 +272,7 @@ func TestConfigManager_Validate(t *testing.T) {
 		{
 			name: "invalid log level",
 			config: &Config{
-				Server: ServerConfig{Host: "localhost", Port: 8080},
+				Server: ServerConfig{Host: "localhost", Port: 1124},
 				Auth:   AuthConfig{Enabled: false},
 				Routes: []RouteConfig{
 					{Path: "/static", Directory: staticDir},
@@ -295,16 +295,15 @@ func TestConfigManager_Validate(t *testing.T) {
 		})
 	}
 }
-func T
-estGetDefaultConfig(t *testing.T) {
+func TestGetDefaultConfig(t *testing.T) {
 	config := GetDefaultConfig()
 
 	// Verify default values
 	if config.Server.Host != "localhost" {
 		t.Errorf("Expected default host 'localhost', got '%s'", config.Server.Host)
 	}
-	if config.Server.Port != 8080 {
-		t.Errorf("Expected default port 8080, got %d", config.Server.Port)
+	if config.Server.Port != 1123 {
+		t.Errorf("Expected default port 1123, got %d", config.Server.Port)
 	}
 	if config.Auth.Enabled {
 		t.Error("Expected auth to be disabled by default")
@@ -332,6 +331,18 @@ func TestConfigManager_LoadOrCreateDefault_CreateNew(t *testing.T) {
 	cm := NewConfigManager()
 	tempDir := t.TempDir()
 	configFile := filepath.Join(tempDir, "new-config.yaml")
+
+	// Change to temp directory so relative paths work
+	oldWd, err := os.Getwd()
+	if err != nil {
+		t.Fatalf("Failed to get working directory: %v", err)
+	}
+	defer os.Chdir(oldWd)
+	
+	err = os.Chdir(tempDir)
+	if err != nil {
+		t.Fatalf("Failed to change directory: %v", err)
+	}
 
 	// File doesn't exist, should create default
 	config, err := cm.LoadOrCreateDefault(configFile)
@@ -404,7 +415,7 @@ func TestConfigManager_ApplyDefaults(t *testing.T) {
 
 	// Create config with missing values
 	config := &Config{
-		Server: ServerConfig{Host: "", Port: 0}, // Missing values
+		Server: ServerConfig{Host: "", Port: -1}, // Missing/invalid values
 		Auth:   AuthConfig{Enabled: false},
 		Routes: []RouteConfig{}, // Empty routes
 		Logging: LoggingConfig{Level: "", File: ""}, // Missing level
@@ -416,8 +427,8 @@ func TestConfigManager_ApplyDefaults(t *testing.T) {
 	if config.Server.Host != "localhost" {
 		t.Errorf("Expected default host 'localhost', got '%s'", config.Server.Host)
 	}
-	if config.Server.Port != 8080 {
-		t.Errorf("Expected default port 8080, got %d", config.Server.Port)
+	if config.Server.Port != 1123 {
+		t.Errorf("Expected default port 1123, got %d", config.Server.Port)
 	}
 	if len(config.Routes) != 2 {
 		t.Errorf("Expected 2 default routes, got %d", len(config.Routes))

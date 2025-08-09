@@ -1,6 +1,6 @@
 server:
   host: "localhost"
-  port: 8080
+  port: 1123
 
 auth:
   enabled: false
