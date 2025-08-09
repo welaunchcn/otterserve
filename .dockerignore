@@ -1,0 +1,38 @@
+# Build artifacts
+build/
+dist/
+*.exe
+
+# Test files
+coverage.out
+coverage.html
+
+# IDE files
+.vscode/
+.idea/
+*.swp
+*.swo
+
+# OS files
+.DS_Store
+Thumbs.db
+
+# Git
+.git/
+.gitignore
+
+# Documentation
+*.md
+LICENSE
+
+# CI/CD
+.github/
+
+# Development tools
+.air.toml
+Makefile
+build.sh
+build.ps1
+
+# Logs
+*.log

@@ -1,0 +1,18 @@
+server:
+  host: "localhost"
+  port: 8080
+
+auth:
+  enabled: false
+  username: ""
+  password: ""
+
+routes:
+  - path: "/static"
+    directory: "./static"
+  - path: "/docs"
+    directory: "./docs"
+
+logging:
+  level: "info"
+  file: ""  # empty means stdout/stderr
