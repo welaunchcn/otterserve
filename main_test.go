@@ -7,7 +7,7 @@ import (
 	"strings"
 	"testing"
 
-	"mini-http-service/internal/logger"
+	"otterserve/internal/logger"
 )
 
 func TestShowHelp(t *testing.T) {
@@ -147,11 +147,11 @@ func TestConstants(t *testing.T) {
 	}
 
 	// Check that constants have expected values
-	if serviceName != "mini-http-service" {
-		t.Errorf("Expected serviceName 'mini-http-service', got '%s'", serviceName)
+	if serviceName != "otterserve" {
+		t.Errorf("Expected serviceName 'otterserve', got '%s'", serviceName)
 	}
-	if serviceDisplay != "Mini HTTP Service" {
-		t.Errorf("Expected serviceDisplay 'Mini HTTP Service', got '%s'", serviceDisplay)
+	if serviceDisplay != "Otter Serve Service" {
+		t.Errorf("Expected serviceDisplay 'Otter Serve Service', got '%s'", serviceDisplay)
 	}
 	if version != "1.0.0" {
 		t.Errorf("Expected version '1.0.0', got '%s'", version)
@@ -172,7 +172,7 @@ func TestCLIArguments(t *testing.T) {
 	defer func() { os.Args = oldArgs }()
 
 	// Test help flag
-	os.Args = []string{"mini-http-service", "-help"}
+	os.Args = []string{"otterserve", "-help"}
 	// We can't call main() directly in tests as it would exit
 	// But we can verify the flag parsing setup doesn't panic
 	

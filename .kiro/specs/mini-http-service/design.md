@@ -2,7 +2,7 @@
 
 ## Overview
 
-The mini HTTP service will be built as a Go application using the standard library's `net/http` package for HTTP handling and third-party libraries for cross-platform service management. The architecture follows a modular design with clear separation between configuration, routing, authentication, and service management concerns.
+The Otter Serve Service will be built as a Go application using the standard library's `net/http` package for HTTP handling and third-party libraries for cross-platform service management. The architecture follows a modular design with clear separation between configuration, routing, authentication, and service management concerns.
 
 ## Architecture
 
@@ -177,8 +177,8 @@ logging:
 
 - **Windows:** Registered as Windows Service using Service Control Manager
 - **Linux:** Registered as systemd service with appropriate unit file
-- **Service Name:** `mini-http-service`
-- **Display Name:** `Mini HTTP Service`
+- **Service Name:** `otterserve`
+- **Display Name:** `Otter Serve Service`
 - **Description:** `Lightweight HTTP file server with configurable routing`
 
 ## Error Handling

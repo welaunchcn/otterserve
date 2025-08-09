@@ -1,4 +1,4 @@
-# Mini HTTP Service
+# Otter Serve Service
 
 A lightweight HTTP service in Go that can run as a cross-platform binary on Windows and Linux. The service provides configurable routing to local file system paths with optional basic authentication, and includes service management capabilities.
 
@@ -16,19 +16,19 @@ A lightweight HTTP service in Go that can run as a cross-platform binary on Wind
 ### Basic Usage
 ```bash
 # Run in console mode
-./mini-http-service
+./otterserve
 
 # Install as system service
-./mini-http-service -install
+./otterserve -install
 
 # Uninstall system service
-./mini-http-service -uninstall
+./otterserve -uninstall
 
 # Show version
-./mini-http-service -version
+./otterserve -version
 
 # Show help
-./mini-http-service -help
+./otterserve -help
 ```
 
 ### Configuration
@@ -114,23 +114,23 @@ make clean
 
 ```bash
 # Build for current platform
-go build -o mini-http-service
+go build -o otterserve
 
 # Cross-compile for Windows
-GOOS=windows GOARCH=amd64 go build -o mini-http-service.exe
+GOOS=windows GOARCH=amd64 go build -o otterserve.exe
 
 # Cross-compile for Linux
-GOOS=linux GOARCH=amd64 go build -o mini-http-service
+GOOS=linux GOARCH=amd64 go build -o otterserve
 ```
 
 ### Docker Build
 
 ```bash
 # Build Docker image
-docker build -t mini-http-service .
+docker build -t otterserve .
 
 # Run in Docker
-docker run -p 8080:8080 -v $(pwd)/config.yaml:/app/config.yaml mini-http-service
+docker run -p 8080:8080 -v $(pwd)/config.yaml:/app/config.yaml otterserve
 ```
 
 ## Development

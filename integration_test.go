@@ -11,12 +11,12 @@ import (
 	"testing"
 	"time"
 
-	"mini-http-service/internal/auth"
-	"mini-http-service/internal/config"
-	"mini-http-service/internal/fileserver"
-	"mini-http-service/internal/logger"
-	"mini-http-service/internal/server"
-	"mini-http-service/internal/service"
+	"otterserve/internal/auth"
+	"otterserve/internal/config"
+	"otterserve/internal/fileserver"
+	"otterserve/internal/logger"
+	"otterserve/internal/server"
+	"otterserve/internal/service"
 )
 
 // TestEndToEndIntegration tests the complete application flow

@@ -1,7 +1,7 @@
-# Mini HTTP Service Build Configuration
+# Otter Serve Service Build Configuration
 
 # Application information
-APP_NAME := mini-http-service
+APP_NAME := otterserve
 VERSION := 1.0.0
 BUILD_TIME := $(shell date -u '+%Y-%m-%d_%H:%M:%S')
 GIT_COMMIT := $(shell git rev-parse --short HEAD 2>/dev/null || echo "unknown")

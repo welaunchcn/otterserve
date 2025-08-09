@@ -11,12 +11,12 @@ import (
 	"testing"
 	"time"
 
-	"mini-http-service/internal/auth"
-	"mini-http-service/internal/config"
-	"mini-http-service/internal/fileserver"
-	"mini-http-service/internal/logger"
-	"mini-http-service/internal/server"
-	"mini-http-service/internal/service"
+	"otterserve/internal/auth"
+	"otterserve/internal/config"
+	"otterserve/internal/fileserver"
+	"otterserve/internal/logger"
+	"otterserve/internal/server"
+	"otterserve/internal/service"
 )
 
 // TestComprehensiveScenarios tests various real-world scenarios
@@ -209,8 +209,8 @@ logging:
 	
 	// Test service manager creation
 	_, err := service.NewServiceManager(
-		"test-mini-http-service",
-		"Test Mini HTTP Service",
+		"test-otterserve",
+		"Test Otter Serve Service",
 		"Test service for unit testing",
 		configFile,
 		log,

@@ -10,10 +10,10 @@ import (
 	"testing"
 	"time"
 
-	"mini-http-service/internal/auth"
-	"mini-http-service/internal/config"
-	"mini-http-service/internal/fileserver"
-	"mini-http-service/internal/logger"
+	"otterserve/internal/auth"
+	"otterserve/internal/config"
+	"otterserve/internal/fileserver"
+	"otterserve/internal/logger"
 )
 
 func TestNewHTTPServer(t *testing.T) {

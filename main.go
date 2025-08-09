@@ -6,14 +6,14 @@ import (
 	"os"
 	"path/filepath"
 
-	"mini-http-service/internal/config"
-	"mini-http-service/internal/logger"
-	"mini-http-service/internal/service"
+	"otterserve/internal/config"
+	"otterserve/internal/logger"
+	"otterserve/internal/service"
 )
 
 const (
-	serviceName    = "mini-http-service"
-	serviceDisplay = "Mini HTTP Service"
+	serviceName    = "otterserve"
+	serviceDisplay = "Otter Serve Service"
 	serviceDesc    = "Lightweight HTTP file server with configurable routing"
 	version        = "1.0.0"
 	defaultConfig  = "config.yaml"

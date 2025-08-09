@@ -8,11 +8,11 @@ import (
 	"syscall"
 
 	"github.com/kardianos/service"
-	"mini-http-service/internal/auth"
-	"mini-http-service/internal/config"
-	"mini-http-service/internal/fileserver"
-	"mini-http-service/internal/logger"
-	"mini-http-service/internal/server"
+	"otterserve/internal/auth"
+	"otterserve/internal/config"
+	"otterserve/internal/fileserver"
+	"otterserve/internal/logger"
+	"otterserve/internal/server"
 )
 
 // ServiceManager interface defines service management operations

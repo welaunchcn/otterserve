@@ -10,7 +10,7 @@ on:
 
 env:
   GO_VERSION: '1.21'
-  APP_NAME: mini-http-service
+  APP_NAME: otterserve
 
 jobs:
   test:

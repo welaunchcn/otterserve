@@ -1,4 +1,4 @@
-module mini-http-service
+module otterserve
 
 go 1.21
 

@@ -1,6 +1,6 @@
 # Test Summary
 
-This document provides an overview of the comprehensive testing suite for the Mini HTTP Service.
+This document provides an overview of the comprehensive testing suite for the Otter Serve Service.
 
 ## Test Coverage
 

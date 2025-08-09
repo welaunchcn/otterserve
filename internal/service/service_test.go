@@ -7,7 +7,7 @@ import (
 	"testing"
 
 	"github.com/kardianos/service"
-	"mini-http-service/internal/logger"
+	"otterserve/internal/logger"
 )
 
 func TestNewServiceManager(t *testing.T) {

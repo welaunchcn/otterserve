@@ -4,7 +4,7 @@ param(
     [string]$Config = "config.yaml"
 )
 
-$APP_NAME = "mini-http-service"
+$APP_NAME = "otterserve"
 $VERSION = "1.0.0"
 $BUILD_TIME = Get-Date -Format "yyyy-MM-dd_HH:mm:ss" -AsUTC
 $GIT_COMMIT = try { git rev-parse --short HEAD } catch { "unknown" }

@@ -22,7 +22,7 @@ ARG BUILD_TIME
 ARG GIT_COMMIT
 RUN CGO_ENABLED=0 GOOS=linux go build \
     -ldflags "-X main.version=${VERSION} -X main.buildTime=${BUILD_TIME} -X main.gitCommit=${GIT_COMMIT} -w -s" \
-    -o mini-http-service .
+    -o otterserve .
 
 # Production stage
 FROM alpine:latest
@@ -38,7 +38,7 @@ RUN addgroup -g 1001 -S appgroup && \
 WORKDIR /app
 
 # Copy binary from builder stage
-COPY --from=builder /app/mini-http-service .
+COPY --from=builder /app/otterserve .
 
 # Copy default configuration
 COPY config.yaml .
@@ -48,8 +48,8 @@ RUN mkdir -p static docs && \
     chown -R appuser:appgroup /app
 
 # Create sample files
-RUN echo '<!DOCTYPE html><html><head><title>Mini HTTP Service</title></head><body><h1>Welcome to Mini HTTP Service</h1><p>This service is running in a Docker container.</p></body></html>' > static/index.html && \
-    echo 'Mini HTTP Service Documentation\n\nThis is a lightweight HTTP file server running in Docker.' > docs/readme.txt && \
+RUN echo '<!DOCTYPE html><html><head><title>Otter Serve Service</title></head><body><h1>Welcome to Otter Serve Service</h1><p>This service is running in a Docker container.</p></body></html>' > static/index.html && \
+    echo 'Otter Serve Service Documentation\n\nThis is a lightweight HTTP file server running in Docker.' > docs/readme.txt && \
     chown -R appuser:appgroup /app
 
 # Switch to non-root user
@@ -63,4 +63,4 @@ HEALTHCHECK --interval=30s --timeout=3s --start-period=5s --retries=3 \
     CMD wget --no-verbose --tries=1 --spider http://localhost:8080/static/ || exit 1
 
 # Run the application
-CMD ["./mini-http-service"]
+CMD ["./otterserve"]

@@ -108,7 +108,7 @@ func (ba *BasicAuthenticator) extractCredentials(r *http.Request) (username, pas
 
 // sendUnauthorized sends a 401 Unauthorized response with WWW-Authenticate header
 func (ba *BasicAuthenticator) sendUnauthorized(w http.ResponseWriter) {
-	w.Header().Set("WWW-Authenticate", `Basic realm="Mini HTTP Service"`)
+	w.Header().Set("WWW-Authenticate", `Basic realm="Otter Serve Service"`)
 	w.Header().Set("Content-Type", "text/plain")
 	w.WriteHeader(http.StatusUnauthorized)
 	fmt.Fprint(w, "401 Unauthorized\n")

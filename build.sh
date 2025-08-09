@@ -4,7 +4,7 @@
 
 set -e
 
-APP_NAME="mini-http-service"
+APP_NAME="otterserve"
 VERSION="1.0.0"
 BUILD_TIME=$(date -u '+%Y-%m-%d_%H:%M:%S')
 GIT_COMMIT=$(git rev-parse --short HEAD 2>/dev/null || echo "unknown")
