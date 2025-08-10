@@ -82,45 +82,45 @@ make clean
 
 ```powershell
 # Build for current platform
-.\build.ps1 -Target build
+.\scripts\build.ps1 -Target build
 
 # Build for all platforms
-.\build.ps1 -Target build-all
+.\scripts\build.ps1 -Target build-all
 
 # Create distribution packages
-.\build.ps1 -Target dist
+.\scripts\build.ps1 -Target dist
 
 # Run tests
-.\build.ps1 -Target test
+.\scripts\build.ps1 -Target test
 ```
 
 ### Using Bash (Linux/macOS/WSL)
 
 ```bash
 # Build for current platform
-./build.sh build
+./scripts/build.sh build
 
 # Build for all platforms
-./build.sh build-all
+./scripts/build.sh build-all
 
 # Create distribution packages
-./build.sh dist
+./scripts/build.sh dist
 
 # Run tests
-./build.sh test
+./scripts/build.sh test
 ```
 
 ### Manual Build
 
 ```bash
 # Build for current platform
-go build -o otterserve
+go build -o otterserve ./cmd/otterserve
 
 # Cross-compile for Windows
-GOOS=windows GOARCH=amd64 go build -o otterserve.exe
+GOOS=windows GOARCH=amd64 go build -o otterserve.exe ./cmd/otterserve
 
 # Cross-compile for Linux
-GOOS=linux GOARCH=amd64 go build -o otterserve
+GOOS=linux GOARCH=amd64 go build -o otterserve ./cmd/otterserve
 ```
 
 ### Docker Build
@@ -138,7 +138,7 @@ docker run -p 8080:8080 -v $(pwd)/config.yaml:/app/config.yaml otterserve
 The project structure follows Go best practices:
 
 ```
-├── main.go                    # Entry point with CLI parsing
+├── cmd/otterserve/           # Application entry point and tests
 ├── config.yaml               # Default configuration
 ├── internal/
 │   ├── config/               # Configuration management
@@ -147,6 +147,7 @@ The project structure follows Go best practices:
 │   ├── fileserver/           # File serving components
 │   ├── service/              # Service management
 │   └── logger/               # Logging components
+├── scripts/                  # Build scripts
 ├── static/                   # Example static files
-└── docs/                     # Example documentation files
+└── docs/                     # Documentation and test summaries
 ```

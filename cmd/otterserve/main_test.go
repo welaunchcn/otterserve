@@ -50,7 +50,7 @@ func TestRunConsole_ValidConfig(t *testing.T) {
 	// Create temporary directory and config file
 	tempDir := t.TempDir()
 	configFile := filepath.Join(tempDir, "test-config.yaml")
-	
+
 	// Create test directories
 	staticDir := filepath.Join(tempDir, "static")
 	docsDir := filepath.Join(tempDir, "docs")
@@ -81,36 +81,36 @@ logging:
 	// This test is tricky because runConsole is blocking
 	// We'll test that it doesn't immediately fail with the valid config
 	// In a real scenario, it would run until interrupted
-	
+
 	// For now, we'll just test that the function exists and can be called
 	// without immediately panicking or returning an error due to config issues
-	
+
 	// We can't easily test the full run without complex goroutine management
 	// and signal simulation, so we'll focus on testing the setup phase
-	
+
 	// The actual running is tested in the service package tests
 	t.Log("runConsole function exists and can be called with valid config")
 }
 
 func TestRunConsole_InvalidConfig(t *testing.T) {
-	// According to requirements, when config file doesn't exist, 
+	// According to requirements, when config file doesn't exist,
 	// the system should create a default config, not fail.
 	// We test that the function exists and can be called, but we don't
 	// actually call it because it would start a server that runs indefinitely.
-	
+
 	// Test that the function exists (it's defined in main.go)
-	
+
 	// Note: We don't call runConsole() because it would create a default config
 	// and start a server that runs indefinitely. The config creation behavior
 	// is tested in the config package tests, and the console runner behavior
 	// is tested in the service package tests.
-	
+
 	t.Log("runConsole function exists and can handle nonexistent config files")
 }
 
 func TestInstallService_InvalidPath(t *testing.T) {
 	log := logger.NewLogger(logger.InfoLevel, nil)
-	
+
 	// Test with invalid config path (this will fail during service creation)
 	err := installService("/nonexistent/config.yaml", log)
 	if err == nil {
@@ -120,7 +120,7 @@ func TestInstallService_InvalidPath(t *testing.T) {
 
 func TestUninstallService_InvalidPath(t *testing.T) {
 	log := logger.NewLogger(logger.InfoLevel, nil)
-	
+
 	// Test with invalid config path (this will fail during service creation)
 	err := uninstallService("/nonexistent/config.yaml", log)
 	if err == nil {
@@ -166,7 +166,7 @@ func TestCLIArguments(t *testing.T) {
 	// This test verifies that the flag package setup is correct
 	// We can't easily test the main function directly, but we can test
 	// that the flags are defined correctly by checking they don't panic
-	
+
 	// Save original args
 	oldArgs := os.Args
 	defer func() { os.Args = oldArgs }()
@@ -175,7 +175,7 @@ func TestCLIArguments(t *testing.T) {
 	os.Args = []string{"otterserve", "-help"}
 	// We can't call main() directly in tests as it would exit
 	// But we can verify the flag parsing setup doesn't panic
-	
+
 	t.Log("CLI argument parsing setup is correct")
 }
 
@@ -183,7 +183,7 @@ func TestAbsolutePathHandling(t *testing.T) {
 	// Test that relative paths are converted to absolute paths
 	tempDir := t.TempDir()
 	configFile := filepath.Join(tempDir, "config.yaml")
-	
+
 	// Create a basic config file
 	err := os.WriteFile(configFile, []byte("test"), 0644)
 	if err != nil {
