@@ -6,10 +6,10 @@ import (
 	"os"
 	"path/filepath"
 
+	kservice "github.com/kardianos/service"
 	"otterserve/internal/config"
 	"otterserve/internal/logger"
 	"otterserve/internal/service"
-	kservice "github.com/kardianos/service"
 )
 
 const (
@@ -20,7 +20,7 @@ const (
 )
 
 var (
-	version   = "dev"
+	version   = "1.0.0"
 	buildTime = "unknown"
 	gitCommit = "unknown"
 )
@@ -33,7 +33,7 @@ func main() {
 		showVer    = flag.Bool("version", false, "Show version information")
 		configPath = flag.String("config", defaultConfig, "Path to configuration file")
 	)
-	
+
 	flag.Parse()
 
 	// Create logger for CLI operations
@@ -132,20 +132,18 @@ func installService(configPath string, log logger.Logger) error {
 		"path": exePath,
 	})
 
-	// Validate that config file exists and is readable
-	if _, err := os.Stat(configPath); os.IsNotExist(err) {
-		log.Warn("Configuration file does not exist, will be created with defaults", logger.Fields{
-			"config": configPath,
-		})
-	} else if err != nil {
+	// Ensure configuration file exists and is valid
+	if _, err := os.Stat(configPath); err != nil {
+		if os.IsNotExist(err) {
+			return fmt.Errorf("configuration file %s does not exist", configPath)
+		}
 		return fmt.Errorf("cannot access configuration file %s: %w", configPath, err)
 	}
 
-	// Test configuration loading to catch issues early
 	configManager := config.NewConfigManager()
-	cfg, err := configManager.LoadOrCreateDefault(configPath)
+	cfg, err := configManager.Load(configPath)
 	if err != nil {
-		return fmt.Errorf("failed to load or create configuration: %w", err)
+		return fmt.Errorf("failed to load configuration: %w", err)
 	}
 
 	if err := configManager.Validate(cfg); err != nil {
@@ -172,11 +170,11 @@ func installService(configPath string, log logger.Logger) error {
 	log.Info("Service installed successfully", logger.Fields{
 		"service": serviceDisplay,
 	})
-	
+
 	fmt.Printf("%s has been installed successfully.\n", serviceDisplay)
 	fmt.Printf("Configuration file: %s\n", configPath)
 	fmt.Println("You can now start it using your system's service manager.")
-	
+
 	return nil
 }
 
@@ -185,6 +183,13 @@ func uninstallService(configPath string, log logger.Logger) error {
 	log.Info("Uninstalling service", logger.Fields{
 		"service": serviceDisplay,
 	})
+
+	if _, err := os.Stat(configPath); err != nil {
+		if os.IsNotExist(err) {
+			return fmt.Errorf("configuration file %s does not exist", configPath)
+		}
+		return fmt.Errorf("cannot access configuration file %s: %w", configPath, err)
+	}
 
 	serviceManager, err := service.NewServiceManager(
 		serviceName,
@@ -204,9 +209,9 @@ func uninstallService(configPath string, log logger.Logger) error {
 	log.Info("Service uninstalled successfully", logger.Fields{
 		"service": serviceDisplay,
 	})
-	
+
 	fmt.Printf("%s has been uninstalled successfully.\n", serviceDisplay)
-	
+
 	return nil
 }
 
@@ -235,7 +240,7 @@ func runConsole(configPath string, log logger.Logger) error {
 	})
 
 	runner := service.NewConsoleRunner(configPath, log)
-	
+
 	fmt.Printf("Starting %s in console mode...\n", serviceDisplay)
 	fmt.Printf("Configuration: %s\n", configPath)
 	fmt.Printf("Server will listen on: %s:%d\n", cfg.Server.Host, cfg.Server.Port)
@@ -250,7 +255,7 @@ func runConsole(configPath string, log logger.Logger) error {
 	}
 	fmt.Println("Press Ctrl+C to stop")
 	fmt.Println()
-	
+
 	return runner.Run()
 }
 

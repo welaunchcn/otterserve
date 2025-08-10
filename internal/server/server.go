@@ -6,6 +6,7 @@ import (
 	"net"
 	"net/http"
 	"strings"
+	"sync"
 	"time"
 
 	"otterserve/internal/auth"
@@ -24,19 +25,20 @@ type Server interface {
 
 // HTTPServer implements the Server interface
 type HTTPServer struct {
-	config       *config.Config
-	server       *http.Server
-	mux          *http.ServeMux
-	logger       logger.Logger
+	config        *config.Config
+	server        *http.Server
+	mux           *http.ServeMux
+	logger        logger.Logger
 	authenticator auth.Authenticator
-	fileServer   fileserver.FileServer
-	actualAddr   string
+	fileServer    fileserver.FileServer
+	actualAddr    string
+	addrMu        sync.RWMutex
 }
 
 // NewHTTPServer creates a new HTTP server instance
 func NewHTTPServer(cfg *config.Config, log logger.Logger, authenticator auth.Authenticator, fileServer fileserver.FileServer) Server {
 	mux := http.NewServeMux()
-	
+
 	server := &http.Server{
 		Addr:         fmt.Sprintf("%s:%d", cfg.Server.Host, cfg.Server.Port),
 		Handler:      mux,
@@ -63,8 +65,8 @@ func (s *HTTPServer) Start() error {
 	}
 
 	s.logger.Info("Starting HTTP server", logger.Fields{
-		"address": s.server.Addr,
-		"routes":  len(s.config.Routes),
+		"address":      s.server.Addr,
+		"routes":       len(s.config.Routes),
 		"auth_enabled": s.authenticator.IsEnabled(),
 	})
 
@@ -75,7 +77,9 @@ func (s *HTTPServer) Start() error {
 	}
 
 	// Store the actual address
+	s.addrMu.Lock()
 	s.actualAddr = listener.Addr().String()
+	s.addrMu.Unlock()
 
 	// Start server in a goroutine
 	go func() {
@@ -88,7 +92,7 @@ func (s *HTTPServer) Start() error {
 
 	// Give the server a moment to start
 	time.Sleep(100 * time.Millisecond)
-	
+
 	s.logger.Info("HTTP server started successfully", logger.Fields{
 		"address": s.actualAddr,
 	})
@@ -99,14 +103,14 @@ func (s *HTTPServer) Start() error {
 // Stop gracefully stops the HTTP server
 func (s *HTTPServer) Stop(ctx context.Context) error {
 	s.logger.Info("Stopping HTTP server")
-	
+
 	if err := s.server.Shutdown(ctx); err != nil {
 		s.logger.Error("Failed to gracefully shutdown server", logger.Fields{
 			"error": err.Error(),
 		})
 		return err
 	}
-	
+
 	s.logger.Info("HTTP server stopped")
 	return nil
 }
@@ -171,7 +175,7 @@ func (s *HTTPServer) registerRoute(route config.RouteConfig) error {
 func (s *HTTPServer) loggingMiddleware(next http.Handler) http.Handler {
 	return http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
 		start := time.Now()
-		
+
 		// Create request-specific logger
 		requestLogger := s.logger.(*logger.DefaultLogger).RequestLogger(
 			generateRequestID(),
@@ -212,7 +216,7 @@ func (s *HTTPServer) notFoundHandler(w http.ResponseWriter, r *http.Request) {
 		if !strings.HasSuffix(routePath, "/") {
 			routePath = routePath + "/"
 		}
-		
+
 		if strings.HasPrefix(r.URL.Path, routePath) {
 			// This should have been handled by the route handler
 			// If we're here, it means the file wasn't found
@@ -234,8 +238,11 @@ func (s *HTTPServer) notFoundHandler(w http.ResponseWriter, r *http.Request) {
 
 // GetAddr returns the server address
 func (s *HTTPServer) GetAddr() string {
-	if s.actualAddr != "" {
-		return s.actualAddr
+	s.addrMu.RLock()
+	addr := s.actualAddr
+	s.addrMu.RUnlock()
+	if addr != "" {
+		return addr
 	}
 	return s.server.Addr
 }

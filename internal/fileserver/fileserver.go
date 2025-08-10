@@ -30,21 +30,20 @@ func NewFileServer() FileServer {
 func (fs *DefaultFileServer) ServeFiles(w http.ResponseWriter, r *http.Request, basePath, directory string) {
 	// Remove the base path from the request URL to get the relative file path
 	relativePath := strings.TrimPrefix(r.URL.Path, basePath)
+	relativePath = strings.TrimPrefix(relativePath, "/")
 	if relativePath == "" {
-		relativePath = "/"
+		relativePath = "."
 	}
 
 	// Clean the path to prevent directory traversal attacks
 	cleanPath := filepath.Clean(relativePath)
-	// Check for directory traversal attempts
-	if strings.Contains(relativePath, "..") || strings.HasPrefix(cleanPath, "/") || cleanPath == ".." {
+	if strings.HasPrefix(cleanPath, "..") || filepath.IsAbs(cleanPath) {
 		http.Error(w, "403 Forbidden", http.StatusForbidden)
 		return
 	}
-	relativePath = cleanPath
 
 	// Construct the full file path
-	fullPath := filepath.Join(directory, relativePath)
+	fullPath := filepath.Join(directory, cleanPath)
 
 	// Get file info
 	fileInfo, err := os.Stat(fullPath)
@@ -153,7 +152,7 @@ func (fs *DefaultFileServer) ListDirectory(w http.ResponseWriter, r *http.Reques
 
 	// Generate HTML response
 	w.Header().Set("Content-Type", "text/html; charset=utf-8")
-	
+
 	data := DirectoryListing{
 		Path:  r.URL.Path,
 		Files: files,
@@ -177,18 +176,18 @@ func (fi FileInfo) FormatSize() string {
 	if fi.IsDir {
 		return "-"
 	}
-	
+
 	const unit = 1024
 	if fi.Size < unit {
 		return fmt.Sprintf("%d B", fi.Size)
 	}
-	
+
 	div, exp := int64(unit), 0
 	for n := fi.Size / unit; n >= unit; n /= unit {
 		div *= unit
 		exp++
 	}
-	
+
 	return fmt.Sprintf("%.1f %cB", float64(fi.Size)/float64(div), "KMGTPE"[exp])
 }
 
