@@ -35,7 +35,7 @@ function Test-Coverage {
 function Build {
     Write-Host "Building for current platform..." -ForegroundColor Green
     if (!(Test-Path $BUILD_DIR)) { New-Item -ItemType Directory -Path $BUILD_DIR }
-    Invoke-Expression "go build $LDFLAGS -o $BUILD_DIR/$APP_NAME.exe ."
+    Invoke-Expression "go build $LDFLAGS -o $BUILD_DIR/$APP_NAME.exe ./cmd/otterserve"
 }
 
 function Build-Windows {
@@ -43,7 +43,7 @@ function Build-Windows {
     if (!(Test-Path $BUILD_DIR)) { New-Item -ItemType Directory -Path $BUILD_DIR }
     $env:GOOS = "windows"
     $env:GOARCH = "amd64"
-    Invoke-Expression "go build $LDFLAGS -o $BUILD_DIR/$APP_NAME-windows-amd64.exe ."
+    Invoke-Expression "go build $LDFLAGS -o $BUILD_DIR/$APP_NAME-windows-amd64.exe ./cmd/otterserve"
     Remove-Item Env:\GOOS
     Remove-Item Env:\GOARCH
 }
@@ -53,7 +53,7 @@ function Build-Linux {
     if (!(Test-Path $BUILD_DIR)) { New-Item -ItemType Directory -Path $BUILD_DIR }
     $env:GOOS = "linux"
     $env:GOARCH = "amd64"
-    Invoke-Expression "go build $LDFLAGS -o $BUILD_DIR/$APP_NAME-linux-amd64 ."
+    Invoke-Expression "go build $LDFLAGS -o $BUILD_DIR/$APP_NAME-linux-amd64 ./cmd/otterserve"
     Remove-Item Env:\GOOS
     Remove-Item Env:\GOARCH
 }
@@ -152,7 +152,7 @@ function Show-Help {
     Write-Host "  uninstall-service- Uninstall system service"
     Write-Host "  help             - Show this help message"
     Write-Host ""
-    Write-Host "Usage: .\build.ps1 -Target <target> [-Config <config-file>]"
+    Write-Host "Usage: .\scripts\build.ps1 -Target <target> [-Config <config-file>]"
 }
 
 # Main execution

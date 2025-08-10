@@ -22,7 +22,7 @@ ARG BUILD_TIME
 ARG GIT_COMMIT
 RUN CGO_ENABLED=0 GOOS=linux go build \
     -ldflags "-X main.version=${VERSION} -X main.buildTime=${BUILD_TIME} -X main.gitCommit=${GIT_COMMIT} -w -s" \
-    -o otterserve .
+    -o otterserve ./cmd/otterserve
 
 # Production stage
 FROM alpine:latest

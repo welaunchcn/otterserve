@@ -98,7 +98,7 @@ jobs:
         go build \
           -ldflags "-X main.version=${{ steps.build_info.outputs.version }} -X main.buildTime=${{ steps.build_info.outputs.build_time }} -X main.gitCommit=${{ steps.build_info.outputs.commit }} -w -s" \
           -o "build/${BINARY_NAME}" \
-          .
+          ./cmd/otterserve
 
     - name: Upload build artifacts
       uses: actions/upload-artifact@v4

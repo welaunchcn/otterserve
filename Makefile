@@ -43,7 +43,7 @@ test-coverage:
 build:
 	@echo "Building for current platform..."
 	@mkdir -p $(BUILD_DIR)
-	@go build $(LDFLAGS) -o $(BUILD_DIR)/$(APP_NAME) .
+    @go build $(LDFLAGS) -o $(BUILD_DIR)/$(APP_NAME) ./cmd/otterserve
 
 # Build for all supported platforms
 .PHONY: build-all
@@ -54,14 +54,14 @@ build-all: build-windows build-linux
 build-windows:
 	@echo "Building for Windows..."
 	@mkdir -p $(BUILD_DIR)
-	@GOOS=windows GOARCH=amd64 go build $(LDFLAGS) -o $(BUILD_DIR)/$(APP_NAME)-windows-amd64.exe .
+    @GOOS=windows GOARCH=amd64 go build $(LDFLAGS) -o $(BUILD_DIR)/$(APP_NAME)-windows-amd64.exe ./cmd/otterserve
 
 # Build for Linux
 .PHONY: build-linux
 build-linux:
 	@echo "Building for Linux..."
 	@mkdir -p $(BUILD_DIR)
-	@GOOS=linux GOARCH=amd64 go build $(LDFLAGS) -o $(BUILD_DIR)/$(APP_NAME)-linux-amd64 .
+    @GOOS=linux GOARCH=amd64 go build $(LDFLAGS) -o $(BUILD_DIR)/$(APP_NAME)-linux-amd64 ./cmd/otterserve
 
 # Create distribution packages
 .PHONY: dist

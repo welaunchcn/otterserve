@@ -106,12 +106,12 @@ make test
 make test-coverage
 
 # PowerShell (Windows)
-.\build.ps1 -Target test
-.\build.ps1 -Target test-coverage
+.\scripts\build.ps1 -Target test
+.\scripts\build.ps1 -Target test-coverage
 
 # Bash (Linux/macOS/WSL)
-./build.sh test
-./build.sh test-coverage
+./scripts/build.sh test
+./scripts/build.sh test-coverage
 ```
 
 ## Test Scenarios Covered

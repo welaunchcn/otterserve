@@ -25,7 +25,7 @@ func TestEndToEndIntegration(t *testing.T) {
 	tempDir := t.TempDir()
 	staticDir := filepath.Join(tempDir, "static")
 	docsDir := filepath.Join(tempDir, "docs")
-	
+
 	os.MkdirAll(staticDir, 0755)
 	os.MkdirAll(docsDir, 0755)
 
@@ -35,7 +35,7 @@ func TestEndToEndIntegration(t *testing.T) {
 <head><title>Test Page</title></head>
 <body><h1>Welcome to Test Server</h1></body>
 </html>`
-	
+
 	testTxt := "This is a test file content."
 	docFile := "This is documentation content."
 
@@ -313,7 +313,7 @@ func TestConsoleRunnerIntegration(t *testing.T) {
 	tempDir := t.TempDir()
 	configFile := filepath.Join(tempDir, "integration-config.yaml")
 	staticDir := filepath.Join(tempDir, "static")
-	
+
 	os.MkdirAll(staticDir, 0755)
 	os.WriteFile(filepath.Join(staticDir, "test.txt"), []byte("integration test"), 0644)
 
@@ -342,23 +342,23 @@ logging:
 
 	// Test that the console runner can be created and configured properly
 	// without actually starting the server (which would run indefinitely)
-	
+
 	if runner == nil {
 		t.Error("Console runner should not be nil")
 	}
-	
+
 	// Test that the config file exists and is readable
 	if _, err := os.Stat(configFile); os.IsNotExist(err) {
 		t.Errorf("Config file should exist: %v", err)
 	}
-	
+
 	// Verify the static directory and test file exist
 	if _, err := os.Stat(filepath.Join(staticDir, "test.txt")); os.IsNotExist(err) {
 		t.Errorf("Test file should exist: %v", err)
 	}
-	
+
 	t.Log("Console runner integration test completed successfully")
-	
+
 	// Note: We don't call runner.Run() because it would start a server that runs indefinitely
 	// The actual server functionality is tested in other integration tests with proper cleanup
 }
@@ -370,10 +370,10 @@ func TestErrorHandling(t *testing.T) {
 	// Test with invalid configuration
 	invalidConfig := &config.Config{
 		Server: config.ServerConfig{
-			Host: "",  // Invalid empty host
+			Host: "", // Invalid empty host
 			Port: 1124,
 		},
-		Routes: []config.RouteConfig{},  // No routes
+		Routes: []config.RouteConfig{}, // No routes
 		Logging: config.LoggingConfig{
 			Level: "info",
 		},
@@ -384,7 +384,7 @@ func TestErrorHandling(t *testing.T) {
 
 	// This should not panic, but the server should fail to start properly
 	httpServer := server.NewHTTPServer(invalidConfig, log, authenticator, fileServer)
-	
+
 	// Try to start server with invalid config
 	err := httpServer.Start()
 	if err == nil {
@@ -399,29 +399,29 @@ func TestConfigurationValidation(t *testing.T) {
 	// Test various invalid configurations
 	invalidConfigs := []*config.Config{
 		{
-			Server: config.ServerConfig{Host: "", Port: 1124},  // Empty host
-			Routes: []config.RouteConfig{{Path: "/test", Directory: "/tmp"}},
+			Server:  config.ServerConfig{Host: "", Port: 1124}, // Empty host
+			Routes:  []config.RouteConfig{{Path: "/test", Directory: "/tmp"}},
 			Logging: config.LoggingConfig{Level: "info"},
 		},
 		{
-			Server: config.ServerConfig{Host: "localhost", Port: -1},  // Invalid port
-			Routes: []config.RouteConfig{{Path: "/test", Directory: "/tmp"}},
+			Server:  config.ServerConfig{Host: "localhost", Port: -1}, // Invalid port
+			Routes:  []config.RouteConfig{{Path: "/test", Directory: "/tmp"}},
 			Logging: config.LoggingConfig{Level: "info"},
 		},
 		{
-			Server: config.ServerConfig{Host: "localhost", Port: 1124},
-			Routes: []config.RouteConfig{},  // No routes
+			Server:  config.ServerConfig{Host: "localhost", Port: 1124},
+			Routes:  []config.RouteConfig{}, // No routes
 			Logging: config.LoggingConfig{Level: "info"},
 		},
 		{
-			Server: config.ServerConfig{Host: "localhost", Port: 1124},
-			Routes: []config.RouteConfig{{Path: "/test", Directory: "/this/path/definitely/does/not/exist/anywhere"}},  // Nonexistent directory
+			Server:  config.ServerConfig{Host: "localhost", Port: 1124},
+			Routes:  []config.RouteConfig{{Path: "/test", Directory: "/this/path/definitely/does/not/exist/anywhere"}}, // Nonexistent directory
 			Logging: config.LoggingConfig{Level: "info"},
 		},
 		{
-			Server: config.ServerConfig{Host: "localhost", Port: 1124},
-			Routes: []config.RouteConfig{{Path: "/test", Directory: "/tmp"}},
-			Logging: config.LoggingConfig{Level: "invalid"},  // Invalid log level
+			Server:  config.ServerConfig{Host: "localhost", Port: 1124},
+			Routes:  []config.RouteConfig{{Path: "/test", Directory: "/tmp"}},
+			Logging: config.LoggingConfig{Level: "invalid"}, // Invalid log level
 		},
 	}
 

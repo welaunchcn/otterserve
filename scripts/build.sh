@@ -53,19 +53,19 @@ function test_coverage() {
 function build() {
     log_info "Building for current platform..."
     mkdir -p "$BUILD_DIR"
-    eval "go build $LDFLAGS -o $BUILD_DIR/$APP_NAME ."
+    eval "go build $LDFLAGS -o $BUILD_DIR/$APP_NAME ./cmd/otterserve"
 }
 
 function build_windows() {
     log_info "Building for Windows..."
     mkdir -p "$BUILD_DIR"
-    GOOS=windows GOARCH=amd64 eval "go build $LDFLAGS -o $BUILD_DIR/$APP_NAME-windows-amd64.exe ."
+    GOOS=windows GOARCH=amd64 eval "go build $LDFLAGS -o $BUILD_DIR/$APP_NAME-windows-amd64.exe ./cmd/otterserve"
 }
 
 function build_linux() {
     log_info "Building for Linux..."
     mkdir -p "$BUILD_DIR"
-    GOOS=linux GOARCH=amd64 eval "go build $LDFLAGS -o $BUILD_DIR/$APP_NAME-linux-amd64 ."
+    GOOS=linux GOARCH=amd64 eval "go build $LDFLAGS -o $BUILD_DIR/$APP_NAME-linux-amd64 ./cmd/otterserve"
 }
 
 function build_all() {
@@ -204,8 +204,8 @@ function show_help() {
     echo "  security         - Run security scan"
     echo "  help             - Show this help message"
     echo ""
-    echo "Usage: ./build.sh <target>"
-    echo "       CONFIG=path ./build.sh run-config"
+    echo "Usage: ./scripts/build.sh <target>"
+    echo "       CONFIG=path ./scripts/build.sh run-config"
 }
 
 # Main execution
