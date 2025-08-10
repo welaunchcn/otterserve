@@ -111,6 +111,8 @@ jobs:
     runs-on: ubuntu-latest
     needs: [build]
     if: github.event_name == 'release'
+    permissions:
+      contents: write
     steps:
     - name: Checkout code
       uses: actions/checkout@v4
@@ -130,7 +132,7 @@ jobs:
         
         # Create Windows package
         mkdir -p "dist/${APP_NAME}-${VERSION}-windows-amd64"
-        find artifacts -name "${APP_NAME}-windows-amd64.exe" -exec cp {} "dist/${APP_NAME}-${VERSION}-windows-amd64/" \;
+        find artifacts -type f -name "${APP_NAME}-windows-amd64.exe" -exec cp {} "dist/${APP_NAME}-${VERSION}-windows-amd64/" \;
         cp config.yaml "dist/${APP_NAME}-${VERSION}-windows-amd64/" || true
         cp README.md "dist/${APP_NAME}-${VERSION}-windows-amd64/" || true
         cp LICENSE "dist/${APP_NAME}-${VERSION}-windows-amd64/" || true
@@ -143,7 +145,7 @@ jobs:
         
         # Create Linux package
         mkdir -p "dist/${APP_NAME}-${VERSION}-linux-amd64"
-        find artifacts -name "${APP_NAME}-linux-amd64" -exec cp {} "dist/${APP_NAME}-${VERSION}-linux-amd64/${APP_NAME}" \;
+        find artifacts -type f -name "${APP_NAME}-linux-amd64" -exec cp {} "dist/${APP_NAME}-${VERSION}-linux-amd64/${APP_NAME}" \;
         chmod +x "dist/${APP_NAME}-${VERSION}-linux-amd64/${APP_NAME}"
         cp config.yaml "dist/${APP_NAME}-${VERSION}-linux-amd64/" || true
         cp README.md "dist/${APP_NAME}-${VERSION}-linux-amd64/" || true
