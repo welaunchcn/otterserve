@@ -12,7 +12,7 @@ func TestConfigManager_Load(t *testing.T) {
 	// Create a temporary config file
 	tempDir := t.TempDir()
 	configFile := filepath.Join(tempDir, "test-config.yaml")
-	
+
 	configContent := `server:
   host: "localhost"
   port: 1124
@@ -73,7 +73,7 @@ logging:
 
 func TestConfigManager_Load_FileNotFound(t *testing.T) {
 	cm := NewConfigManager()
-	
+
 	_, err := cm.Load("nonexistent-file.yaml")
 	if err == nil {
 		t.Error("Expected error when loading nonexistent file")
@@ -86,7 +86,7 @@ func TestConfigManager_Load_InvalidYAML(t *testing.T) {
 	// Create a temporary file with invalid YAML
 	tempDir := t.TempDir()
 	configFile := filepath.Join(tempDir, "invalid-config.yaml")
-	
+
 	invalidYAML := `server:
   host: "localhost"
   port: invalid_port
@@ -308,16 +308,12 @@ func TestGetDefaultConfig(t *testing.T) {
 	if config.Auth.Enabled {
 		t.Error("Expected auth to be disabled by default")
 	}
-	if len(config.Routes) != 2 {
-		t.Errorf("Expected 2 default routes, got %d", len(config.Routes))
+	if len(config.Routes) != 1 {
+		t.Errorf("Expected 1 default route, got %d", len(config.Routes))
 	}
-	if config.Routes[0].Path != "/static" || config.Routes[0].Directory != "./static" {
-		t.Errorf("Expected first route '/static' -> './static', got '%s' -> '%s'", 
+	if config.Routes[0].Path != "/" || config.Routes[0].Directory != "./" {
+		t.Errorf("Expected route '/' -> './', got '%s' -> '%s'",
 			config.Routes[0].Path, config.Routes[0].Directory)
-	}
-	if config.Routes[1].Path != "/docs" || config.Routes[1].Directory != "./docs" {
-		t.Errorf("Expected second route '/docs' -> './docs', got '%s' -> '%s'", 
-			config.Routes[1].Path, config.Routes[1].Directory)
 	}
 	if config.Logging.Level != "info" {
 		t.Errorf("Expected default log level 'info', got '%s'", config.Logging.Level)
@@ -338,7 +334,7 @@ func TestConfigManager_LoadOrCreateDefault_CreateNew(t *testing.T) {
 		t.Fatalf("Failed to get working directory: %v", err)
 	}
 	defer os.Chdir(oldWd)
-	
+
 	err = os.Chdir(tempDir)
 	if err != nil {
 		t.Fatalf("Failed to change directory: %v", err)
@@ -415,9 +411,9 @@ func TestConfigManager_ApplyDefaults(t *testing.T) {
 
 	// Create config with missing values
 	config := &Config{
-		Server: ServerConfig{Host: "", Port: -1}, // Missing/invalid values
-		Auth:   AuthConfig{Enabled: false},
-		Routes: []RouteConfig{}, // Empty routes
+		Server:  ServerConfig{Host: "", Port: -1}, // Missing/invalid values
+		Auth:    AuthConfig{Enabled: false},
+		Routes:  []RouteConfig{},                    // Empty routes
 		Logging: LoggingConfig{Level: "", File: ""}, // Missing level
 	}
 
@@ -430,8 +426,8 @@ func TestConfigManager_ApplyDefaults(t *testing.T) {
 	if config.Server.Port != 1123 {
 		t.Errorf("Expected default port 1123, got %d", config.Server.Port)
 	}
-	if len(config.Routes) != 2 {
-		t.Errorf("Expected 2 default routes, got %d", len(config.Routes))
+	if len(config.Routes) != 1 {
+		t.Errorf("Expected 1 default route, got %d", len(config.Routes))
 	}
 	if config.Logging.Level != "info" {
 		t.Errorf("Expected default log level 'info', got '%s'", config.Logging.Level)

@@ -106,8 +106,7 @@ func GetDefaultConfig() *Config {
 			Password: "",
 		},
 		Routes: []RouteConfig{
-			{Path: "/static", Directory: "./static"},
-			{Path: "/docs", Directory: "./docs"},
+			{Path: "/", Directory: "./"},
 		},
 		Logging: LoggingConfig{
 			Level: "info",
@@ -124,35 +123,35 @@ func (cm *DefaultConfigManager) LoadOrCreateDefault(filename string) (*Config, e
 		// If file doesn't exist, create default config
 		if errors.Is(err, os.ErrNotExist) {
 			config = GetDefaultConfig()
-			
+
 			// Apply defaults to ensure all fields are set
 			cm.applyDefaults(config)
-			
+
 			// Create default directories if they don't exist
 			if err := cm.createDefaultDirectories(config); err != nil {
 				return nil, fmt.Errorf("failed to create default directories: %w", err)
 			}
-			
+
 			// Save default config to file
 			if err := cm.Save(config, filename); err != nil {
 				return nil, fmt.Errorf("failed to save default config: %w", err)
 			}
-			
+
 			return config, nil
 		}
 		return nil, err
 	}
-	
+
 	// Apply defaults to loaded config for any missing fields
 	cm.applyDefaults(config)
-	
+
 	return config, nil
 }
 
 // applyDefaults fills in any missing configuration values with defaults
 func (cm *DefaultConfigManager) applyDefaults(config *Config) {
 	defaults := GetDefaultConfig()
-	
+
 	// Apply server defaults
 	if config.Server.Host == "" {
 		config.Server.Host = defaults.Server.Host
@@ -162,12 +161,12 @@ func (cm *DefaultConfigManager) applyDefaults(config *Config) {
 	if config.Server.Port < 0 {
 		config.Server.Port = defaults.Server.Port
 	}
-	
+
 	// Apply logging defaults
 	if config.Logging.Level == "" {
 		config.Logging.Level = defaults.Logging.Level
 	}
-	
+
 	// Ensure at least one route exists
 	if len(config.Routes) == 0 {
 		config.Routes = defaults.Routes
@@ -220,7 +219,7 @@ func (cm *DefaultConfigManager) Validate(config *Config) error {
 		if route.Directory == "" {
 			return fmt.Errorf("route %d: directory cannot be empty", i)
 		}
-		
+
 		// Check if directory exists
 		if _, err := os.Stat(route.Directory); os.IsNotExist(err) {
 			return fmt.Errorf("route %d: directory %s does not exist", i, route.Directory)
