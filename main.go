@@ -16,8 +16,13 @@ const (
 	serviceName    = "otterserve"
 	serviceDisplay = "Otter Serve Service"
 	serviceDesc    = "Lightweight HTTP file server with configurable routing"
-	version        = "1.0.0"
 	defaultConfig  = "config.yaml"
+)
+
+var (
+	version   = "dev"
+	buildTime = "unknown"
+	gitCommit = "unknown"
 )
 
 func main() {
@@ -37,6 +42,8 @@ func main() {
 	// Show version information
 	if *showVer {
 		fmt.Printf("%s version %s\n", serviceName, version)
+		fmt.Printf("Build time: %s\n", buildTime)
+		fmt.Printf("Git commit: %s\n", gitCommit)
 		return
 	}
 
