@@ -47,10 +47,8 @@ auth:
   password: ""
 
 routes:
-  - path: "/static"
-    directory: "./static"
-  - path: "/docs"
-    directory: "./docs"
+  - path: "/"
+    directory: "./"
 
 logging:
   level: "info"
