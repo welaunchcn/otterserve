@@ -9,6 +9,7 @@ import (
 	"otterserve/internal/config"
 	"otterserve/internal/logger"
 	"otterserve/internal/service"
+	kservice "github.com/kardianos/service"
 )
 
 const (
@@ -77,7 +78,28 @@ func main() {
 		return
 	}
 
-	// Default: run the service in console mode
+	// Default: decide based on environment: service mode vs interactive console
+	if !kservice.Interactive() {
+		// Running under the Windows Service Control Manager
+		svcManager, err := service.NewServiceManager(
+			serviceName,
+			serviceDisplay,
+			serviceDesc,
+			absConfigPath,
+			log,
+		)
+		if err != nil {
+			log.Error("Failed to create service manager", logger.Fields{"error": err.Error()})
+			os.Exit(1)
+		}
+		if err := svcManager.Run(); err != nil {
+			log.Error("Service run failed", logger.Fields{"error": err.Error()})
+			os.Exit(1)
+		}
+		return
+	}
+
+	// Interactive console mode
 	if err := runConsole(absConfigPath, log); err != nil {
 		log.Error("Application failed", logger.Fields{
 			"error": err.Error(),
@@ -88,9 +110,19 @@ func main() {
 
 // installService installs the service
 func installService(configPath string, log logger.Logger) error {
-	log.Info("Installing service", logger.Fields{
+	log.Info("Starting service installation", logger.Fields{
 		"service": serviceDisplay,
 		"config":  configPath,
+	})
+
+	// Get absolute path to the executable
+	exePath, err := os.Executable()
+	if err != nil {
+		return fmt.Errorf("failed to get executable path: %w", err)
+	}
+
+	log.Info("Using executable path", logger.Fields{
+		"path": exePath,
 	})
 
 	// Validate that config file exists and is readable
